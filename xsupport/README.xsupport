@@ -1,0 +1,171 @@
+xsupport programming environment.
+=================================
+
+Written 4/94 by Apostolos Lerios - tolis@cs.
+Modified 1/95 by Chase Garfinkle - chase@cs.
+Modified 5/7/96 by Venkat Krishnamurthy - venkat@cs.
+Updated 4/7/97 by Lucas Pereira - lucasp@cs.
+Updated 9/26/99 by Sean Anderson - seander@cs
+Updated 9/29/03 by Billy Chen - billyc@cs
+Updated 10/2/06 by Eddy Talvala - talvala@stanford
+
+Introduction.
+-------------
+
+xsupport is a platform-independent, X-based, simplified programming
+environment you can use to construct the user interface of your
+programming assignments.
+
+xsupport consists of two parts: (i) an include file ("xsupport/xsupport.h")
+which must be included in your source code whenever you call xsupport
+routines or macros or use xsupport data structures, and (ii) the source code of the library (in directory xsupport), which the included makefile will compile into the library file ("libxsupport.a") with which you must link your ".o" files.
+
+
+Getting started
+---------------
+
+To get started, copy the directory
+/usr/class/cs248/assignments/assignment1 to your own directory, and
+compile the example skeleton paint program by typing "make".  The
+executable will be called "paint".  This program demonstrates how the
+support code is used.  It brings up an X window filled with various
+widgets that you can use to control your paint program.  It also
+brings up two "canvas windows" in which you can display an image
+showing the brush shape and another for the current "painting."
+
+``The paint program reads and writes images in PPM format (a very simple
+image format, try "man ppm").
+
+xsupport's documentation appears in
+"/usr/class/cs248/assignments/assignment1/xsupport/xsupport.h", in the form of in-line comments near the datatypes, macros and functions the package defines.
+
+
+Your program 
+------------
+
+To have additional source files compiled and linked to your program,
+change the definition of the "OBJS" constant in the Makefile.  You can
+optionally change the "TARGET" constant to give a different name to
+your executable. Also, when you have finished coding (REALLY finished
+coding) and you want to create a fast version of your code, change the
+"DEBUG" constant from "-g" to "-O" or "-O2" and recompile.
+
+The paint program is "event-driven".  The function main() sets up the
+user interface, creating and configuring all the windows, buttons etc,
+and then relinquishes control to xsupport.  Your private data
+structures, and possibly your canvases should first be initialized in
+main(). Its last line should be a call to "LiftOff()", which will give
+control of the program flow to xsupport.  Next, xsupport takes over
+and handles all user interface, up until the point where an event
+takes place, e.g. the user clicks on a button, or changes the position
+of a slider, or moves the mouse within the canvas.  In response to
+such user actions, xsupport will invoke the callback you have
+associated with that event.  When your callback function ends,
+xsupport will once again take over (unless you invoke exit() of
+course), and wait for the next event.
+
+Your user interface, just as the example paint program's, will be
+completely specified by a collection of static arrays, defining
+pushbutton, file dialog buttons, choice buttons, sliders, and
+canvases.  The purpose of each user interface item, and the events it
+triggers are documented in
+"/usr/class/cs248/assigments/assignment1/xsupport/xsupport.h".  Make sure you 
+play with the starting point paint program long enough to understand all
+the events that it might encounter and the sequence in which they
+might occur.
+
+
+That's really all you need to know; we give a few more details on the
+structure of the support code below.
+
+
+Images and their formats.  -------------------------
+
+The package xsupport understands the raw PPM image format only.  PPM is
+a very simple, uncompressed, lossless standard.  We provide two
+routines, LoadCanvas() and SaveCanvas(), implementing an interface
+between PPM files and the Canvas user interface data structure.
+
+Most images you find are not in PPM format.  You can use "display" 
+(/usr/bin/display) on the myth machines to view and convert images into the 
+ppm format (click on the image to bring up the toolbar, select save and use 
+the .ppm extension).
+
+You can also use "convert" to convert from virtually any image format to ppm. 
+To convert a jpg to ppm,  "convert foo.jpg foo.ppm". You can also perform 
+various image manipulations through convert. For example, 
+"convert -rotate 90 -geometry 25x25% foo.jpg foo.ppm" will convert foo.jpg
+into a ppm, while also rotating the image 90 degrees clockwise and
+shrink the foo.jpg by 25% in width and height. Type "convert --help" or
+"man convert" for more options and details.
+
+
+Other platforms.  
+----------------
+
+The xsupport package has been tested on the Myth cluster and other former 
+Sweet Hall machines. These machines are the only ones we support.  
+However, given that the code was written in standard X and Motif, it 
+should be able to compile and execute on any platform supporting such 
+a programming environment.  If you want to know the hardware configuration 
+of any Stanford machine, use "whois machine_name.stanford.edu".  Moreover, 
+any X display with 8-bit or 24-bit color or grayscale should be able to 
+display xsupport-based applications (in 24-bits if the display supports it).
+
+
+If you want to copy xsupport over to some local workstation, feel free
+to do so.  You can obtain documented source code and makefiles from
+"/usr/class/cs248/assignments/assignment1/xsupport".  Please keep the author
+information intact so that questions and bug reports can reach us.
+However, we do not assume any responsibility for the performance of
+our system outside the myth cluster confines.
+
+
+Canvas modes.
+-------------
+
+The xsupport package works with 24-bit or 8-bit, color or grayscale
+servers. If the server has a 24-bit screen, then no matter who the
+client is, the xsupport application windows will appear in
+24-bits. Hence, you can develop your code on a non-myth platform
+throughout, and whenever you want to see your work in 24-bit color,
+just use an myth (or any other 24-bit display) as a server with any
+client. The same client-server independence principle holds the other
+way around too: if the server is an 8-bit machine, no matter who the
+client is, the xsupport application windows will appear in 8-bits. 
+
+Now let's get into the details of what xsupport canvases (windows
+displaying images) can look like.  On a 24-bit display, you can
+display an image in one of four modes: full color, red only, green
+only, blue only. The first mode simply sends the pixel values you
+specify (24 bits per pixel, 8 bits for each of red, green and blue) to
+the display hardware. Gamma correction is assumed to be handled by the
+display hardware.  The remaining three modes simply send only one of the 
+three color components to the display hardware; the other two color 
+components are set to black (zero).  These last three modes, are helpful 
+for debugging.
+
+If your server has an 8-bit screen, xsupport will still work in all of
+the above modes. However, the quality of the displayed images in the
+full color mode will be significantly worse.  In particular, in order
+to simulate 24-bit color (what you give to xsupport) on an 8-bit
+screen (what the display expects), xsupport will use 240 colors, and
+4x4 dithering. For the single-primary modes (red only, green only,
+blue only), however, dithering will not be used, and the 256 shades of
+a primary will be displayed directly on the screen.  (To be more
+precise, the 256 shades of a primary will be mapped onto the 240
+possible shades that can be displayed in a Motif window.)
+
+On 8-bit screens, gamma correction has to be implemented in software,
+and xsupport does this for you.  You can, however, enable or disable
+gamma-correction on a canvas by canvas basis.  You will find this
+useful when using the single-primary modes.
+
+On 8-bit screens, xsupport will use custom colormaps for each of the
+canvas windows.  Hence the windows' colors will flash when the
+mouse moves in and out of your canvas windows.  This behavior
+is annoying at times, but there is no way to circumvent it without
+sacrificing image quality even more.
+
+Two command-line options supported by xsupport relate to the display
+mode. See the on-line documentation in xsupport.h.
