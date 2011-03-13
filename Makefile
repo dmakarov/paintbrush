@@ -3,10 +3,7 @@
 
 DEBUG=-g
 
-# CS248 software directory.
-
-BASEDIR=/afs/ir.stanford.edu/class/cs248/support
-CS248_LIBS=-L/opt/local/lib -Xlinker -rpath -Xlinker .
+LIBS= -L/opt/local/lib
 X_LIBS = -lXm -lXp -lXext -lXt -lX11 -lm
 
 # The object files comprising the application code.
@@ -21,9 +18,7 @@ TARGET=paint
 # LINKING.
 
 $(TARGET): $(OBJS) Makefile libxsupport.a
-	$(CXX) -Wall $(DEBUG) -o $@ $(OBJS) -L. \
-	$(CS248_LIBS) -lxsupport $(X_LIBS) 
-
+	$(CXX) -Wall $(DEBUG) -o $@ $(OBJS) -L. $(LIBS) -lxsupport $(X_LIBS) 
 
 # COMPILATION.
 
@@ -32,7 +27,7 @@ libxsupport.a:
 	make -C xsupport
 
 .c.o:
-	$(CXX) -Wall -Wno-write-strings -I$(BASEDIR)/include/ $(DEBUG) -c -o $@ $*.c
+	$(CXX) -Wall -Wno-write-strings $(DEBUG) -c -o $@ $*.c
 
 
 # CLEANUP.
