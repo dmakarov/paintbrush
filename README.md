@@ -1,3 +1,6 @@
+# paintbrush
+
+[<img src="https://travis-ci.org/dmakarov/paintbrush.png?branch=master">](https://travis-ci.org/dmakarov/paintbrush)
 
 Functionality:
 
