@@ -512,7 +512,7 @@ fill_canvas( Canvas* canvas, unsigned long pixel )
 static void
 fill_canvas0()
 {
-    unsigned long pixel;
+    unsigned long pixel = 0;
     SET_RED( pixel, Rcomponent );
     SET_GREEN( pixel, Gcomponent );
     SET_BLUE( pixel, Bcomponent );
