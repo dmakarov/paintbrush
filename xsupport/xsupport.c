@@ -1,3 +1,4 @@
+#pragma GCC diagnostic ignored "-Wwrite-strings"
 /* SIMPLIFIED MOTIF INTERFACE (XSUPPORT PACKAGE).
 
    Created 4/94 by Apostolos Lerios - tolis@cs. 
