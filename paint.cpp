@@ -94,6 +94,7 @@ static void display_brush();
 
 static void reset_canvas();
 static void fill_canvas0();
+static void move_cursor( int, int, unsigned int );
 
 /* PUSHBUTTONS. */
 static
@@ -259,7 +260,6 @@ Slider Sliders[] =
 
 /* CANVASES. */
 
-static void move_cursor( int, int, unsigned int );
 int mouse_action_delay = 2;
 
 static void
